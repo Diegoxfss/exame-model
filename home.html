@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Question and Answer Game</title>
+  <style>
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    h1, p {
+      text-align: center;
+    }
+    button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Question and Answer Game</h1>
+    <div id="question"></div>
+    <div id="options"></div>
+    <button id="nextButton">Next</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    var currentQuestion = 0;
+    var score = 0;
+
+    var questions = [
+      {
+        question: "What is the capital of France?",
+        options: ["Paris", "London", "Berlin", "Rome"],
+        answer: "Paris"
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Venus", "Mars", "Jupiter", "Saturn"],
+        answer: "Mars"
+      },
+      {
+        question: "Who painted the Mona Lisa?",
+        options: ["Pablo Picasso", "Leonardo da Vinci", "Vincent van Gogh", "Michelangelo"],
+        answer: "Leonardo da Vinci"
+      },
+      {
+        question: "What is the largest ocean in the world?",
+        options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+        answer: "Pacific Ocean"
+      }
+    ];
+
+    var questionElement = document.getElementById("question");
+    var optionsElement = document.getElementById("options");
+    var nextButton = document.getElementById("nextButton");
+    var resultElement = document.getElementById("result");
+
+    function loadQuestion() {
+      var questionData = questions[currentQuestion];
+      questionElement.textContent = questionData.question;
+
+      optionsElement.innerHTML = "";
+      for (var i = 0; i < questionData.options.length; i++) {
+        var option = document.createElement("button");
+        option.textContent = questionData.options[i];
+        option.addEventListener("click", checkAnswer);
+        optionsElement.appendChild(option);
+      }
+
+      nextButton.disabled = true;
+      resultElement.textContent = "";
+    }
+
+    function checkAnswer(event) {
+      var selectedOption = event.target.textContent;
+      var questionData = questions[currentQuestion];
+
+      if (selectedOption === questionData.answer) {
+        score++;
+        resultElement.textContent = "Correct!";
+      } else {
+        resultElement.textContent = "Wrong!";
+      }
+
+      nextButton.disabled = false;
+
+      var options = optionsElement.getElementsByTagName("button");
+      for (var i = 0; i < options.length; i++) {
+        options[i].removeEventListener("click", checkAnswer);
+      }
+    }
+
+    function showNextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        showFinalResult();
+      }
+    }
+
+    function showFinalResult() {
+      questionElement.textContent = "";
+      optionsElement.innerHTML = "";
+      nextButton.disabled = true;
+      resultElement.textContent = "You answered " + score + " out of " + questions.length + " questions correctly.";
+      var restartButton = document.createElement("button");
+  restartButton.textContent = "Restart";
+  restartButton.addEventListener("click", restartGame);
+  optionsElement.appendChild(restartButton);
+}
+
+function restartGame() {
+  currentQuestion = 0;
+  score = 0;
+  loadQuestion();
+}
+
+loadQuestion();
+nextButton.addEventListener("click", showNextQuestion);
+</script>
+</body>
+</html>
